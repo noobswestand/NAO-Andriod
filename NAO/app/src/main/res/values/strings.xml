@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">NAO</string>
+
+    <string-array name="postures">
+        <item>Stand</item>
+        <item>StandInit</item>
+        <item>StandZero</item>
+        <item>Crouch</item>
+        <item>Sit</item>
+        <item>SitRelax</item>
+        <item>LyingBelly</item>
+        <item>LyingBack</item>
+    </string-array>
+
 </resources>

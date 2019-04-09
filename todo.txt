@@ -1,0 +1,14 @@
+10.0.2.2
+
+add ip loading + saving
+
+
+add fragments
+	make main screen where you can click on activities
+	fragments that go out to simplier things - just do tts
+
+put battery + vol in nav bar
+
+pos
+	stand,sit,etc
+	

@@ -6,15 +6,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ConnectingActivity extends AppCompatActivity {
+    private static final String FILE="ip.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +25,20 @@ public class ConnectingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connecting);
 
         TestConnect test = new TestConnect(this);
-        //test.execute("10.0.2.2");
         test.execute(robotinfo.getInstance().getIP());
+
+        Button bnt=findViewById(R.id.bnt_back);
+        bnt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent =new Intent(ConnectingActivity.this,MenuActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
     private class TestConnect extends AsyncTask<String, Void, String> {
@@ -77,30 +92,52 @@ public class ConnectingActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final String s) {
             if (text=="Connected"){
+                //Write IP to thing
+                String ip=robotinfo.getInstance().getIP();
+                FileOutputStream fos = null;
+
+                try {
+                    fos = openFileOutput(FILE, MODE_PRIVATE);
+                    fos.write(ip.getBytes()); //saves data
+
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                } finally
+                {
+                    if (fos != null)
+                    {
+                        try
+                        {
+                            fos.close();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+
+                //Launch new activity
                 Intent intent =new Intent(ConnectingActivity.this,MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }else {
+
                 TextView txt = main.findViewById(R.id.txt_connect);
                 txt.setText(text);
 
-                ProgressBar pgb=main.findViewById(R.id.progressBar);
+                pl.droidsonroids.gif.GifImageView pgb=main.findViewById(R.id.progressBar);
                 pgb.setVisibility(View.GONE);
 
                 Button bnt=main.findViewById(R.id.bnt_back);
                 bnt.setVisibility(View.VISIBLE);
-
-                bnt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Intent intent =new Intent(ConnectingActivity.this,MenuActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-
-                    }
-                });
-
 
             }
         }
